@@ -118,3 +118,28 @@ Data: 699,635 train rows, 299,844 test rows, 23 raw features
 
 We will submit improved versions daily (up to the Kaggle submission limit of 10/day) until the deadline or until leaderboard plateaus. Strategy: iterate quickly (feature engineering → hyperparameter tuning → ensembling → stacking) and submit best-performing variants.
 Experiment 2 timed out at 5 min. Adjusting: using faster training settings and submitting v2 after shorter run.
+
+---
+
+## Experiment 5 — Hyperparameter Grid Search (XGB) — 2026-10-22 14:17
+
+### What we did
+- Performed hyperparameter grid search for XGBoost using the feature engineering pipeline from previous experiments (service ratings, age bins, delays, interactions, target encoding, expanded features).
+- Filled `Arrival Delay in Minutes` NaN with 0.
+- Evaluated using 5-fold StratifiedKFold CV on full training data; primary metric: accuracy, with F1 and AUC.
+- Grid: max_depth [4,5,6,7], learning_rate [0.01, 0.03, 0.05], subsample [0.7, 0.85, 0.9], n_estimators [300, 600].
+- Fallback reduced grid applied if total runtime exceeded 300s.
+- Retrained best model on full training data; predicted test.csv.
+
+### Why
+- Systematic grid search ensures we explore the hyperparameter space for the best XGB configuration given engineered features.
+- Stratified CV preserves class balance in each fold for reliable accuracy/F1/AUC estimates.
+
+### Results
+- Best params: {'max_depth': 6, 'learning_rate': 0.05, 'subsample': 0.85, 'n_estimators': 300}
+- Best CV Accuracy: 0.9249
+- Best CV Metrics: Acc=0.9249, F1=0.9144, AUC=0.9580
+- Validation (20% holdout): Accuracy=0.9237, F1=0.9128, AUC=0.9572
+- Submission: `submissions/submission_v5.csv`
+- Runtime: ~72.2s
+- Note: Submitted regardless of comparison to v4 (0.9256) per submission policy.

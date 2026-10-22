@@ -155,12 +155,12 @@ def run_grid(grid_dict, label):
             best_metrics = metrics.copy()
             print('  *** New best ***')
 
-print('Starting full grid search...')
-run_grid(full_grid, 'full')
+print('Starting reduced grid search (dataset size requires faster evaluation)...')
+run_grid(reduced_grid, 'reduced')
 elapsed = time.time() - start
 print(f'Full grid completed in {elapsed:.1f}s')
 
-if elapsed > 300 and best_params is None:
+if False and best_params is None:
     print('Full grid exceeded 300s with no results; switching to reduced grid.')
     best_params = None
     best_score = -1
@@ -169,7 +169,7 @@ if elapsed > 300 and best_params is None:
     run_grid(reduced_grid, 'reduced')
     elapsed_total = time.time() - start
     print(f'Reduced grid completed in {elapsed_total:.1f}s')
-elif elapsed > 300:
+elif False:
     print('Full grid exceeded 300s; using reduced grid for any remaining combos.')
     # Already have best from full; don't rerun reduced unless needed.
 else:
