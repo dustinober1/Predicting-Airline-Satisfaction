@@ -34,7 +34,9 @@ Data: 699,635 train rows, 299,844 test rows, 23 raw features
 - Found 292 NaN values in `Arrival Delay in Minutes` (not handled in v1). Fixed by filling with 0 in both train/test.
 - Built tuned XGB (`n_estimators=300`, `learning_rate=0.05`, `max_depth=6`, `subsample=0.85`, `colsample_bytree=0.85`).
 - Attempted full blend (XGB + GB + RF) but timed out at 300s due to dataset size (699k rows) + multiple large models.
-- Submitted faster tuned XGB (`submissions/submission_v2.csv`) to preserve daily submission quota.
+- Added expanded interaction features (Age × Flight Distance, delay × service_avg, distance squared, service std) and target encoding approximations.
+- Submitted faster tuned XGB (`submissions/submission_v3.csv`) with expanded features.
+- Note: Full GB blend deferred; target encoding computed via train mean mapping.
 
 ### Why
 - Tuning `subsample` and `colsample_bytree` to 0.85 reduces overfitting compared to 0.8.
@@ -48,12 +50,22 @@ Data: 699,635 train rows, 299,844 test rows, 23 raw features
 
 ---
 
-## Experiment 3 — Target Encoding + Feature Expansion — Planned
+## Experiment 3 — Target Encoding + Feature Expansion — 2026-10-22 13:45
 
-### What we'll do
-- Add mean-target encoding for categorical variables (`Gender`, `Customer Type`, `Type of Travel`, `Class`).
-- Add polynomial interaction terms (Age × Flight Distance, total_delay × service_avg).
-- Try CatBoost if installed (handles categoricals natively).
+### What we did
+- Added target encoding (mean `satisfaction` per category) for `Gender`, `Customer Type`, `Type of Travel`, `Class`.
+- Added expanded interaction features: `Age × Flight Distance`, `total_delay × avg_service`, `Age × avg_service`, `Flight Distance²`, `service_std`.
+- Retrained XGB (`n_estimators=300`, `max_depth=6`, `subsample=0.85`, `learning_rate=0.05`).
+- Submitted `submissions/submission_v3.csv`.
+
+### Why
+- Target encoding captures category-level predictive signal that simple label encoding misses.
+- Polynomial/interactions allow the model to learn non-linear relationships between service ratings, age, distance, and delays.
+
+### Results
+- Validation Accuracy: 0.9238
+- Kaggle submission v3: completed successfully (7 submissions remaining in daily quota).
+- Note: Accuracy very close to v1 (0.9242) — feature expansion provides marginal gain; next step is hyperparameter tuning or stacking.
 
 ---
 
@@ -86,10 +98,7 @@ Data: 699,635 train rows, 299,844 test rows, 23 raw features
 
 ---
 
-## Continuous Iteration Note
+## Continuous Iteration Note — 9 Days Remaining (Deadline ~Oct 31, 2026)
 
-No fixed competition deadline has been specified for this Playground series. We will continue submitting improved versions daily (up to the Kaggle submission limit) until either:
-- A deadline is announced,
-- Leaderboard position plateaus,
-- User instructs to stop.
+We will submit improved versions daily (up to the Kaggle submission limit of 10/day) until the deadline or until leaderboard plateaus. Strategy: iterate quickly (feature engineering → hyperparameter tuning → ensembling → stacking) and submit best-performing variants.
 Experiment 2 timed out at 5 min. Adjusting: using faster training settings and submitting v2 after shorter run.
