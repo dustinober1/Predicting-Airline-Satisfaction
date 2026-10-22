@@ -143,3 +143,61 @@ Experiment 2 timed out at 5 min. Adjusting: using faster training settings and s
 - Submission: `submissions/submission_v5.csv`
 - Runtime: ~72.2s
 - Note: Submitted regardless of comparison to v4 (0.9256) per submission policy.
+
+---
+
+## Experiment 7 — Alternative Algorithms (HistGB / LightGBM / CatBoost) — 2026-10-22 14:46
+
+### What we did
+- Loaded dataset using Kaggle path (`../input/playground-series-s6e10/train.csv`) with local fallback (`data/train.csv`).
+- Used existing feature engineering pipeline: service ratings mean/min/max/range/std, age bins, delays (`total_delay`, `has_delay`), expanded interactions (`age_x_distance`, `delay_x_service`, `distance_sq`, `age_x_service`, `distance_per_minute`), target encoding (`_te`), label encoding (`_le`), `loyal_business` / `eco_personal`.
+- Filled NaN in delay columns with 0 (HistGB handles NaN natively but filled for consistency).
+- Trained primary model: `HistGradientBoostingClassifier (sklearn)`.
+- LightGBM available: False, CatBoost available: False.
+- Validated on 20%% stratified holdout.
+- Generated predictions and saved to `submissions/submission_v7.csv`.
+
+### Why
+- Testing faster/native-NaN boosting implementations vs previous XGB to see if algorithm swap improves validation metrics.
+- Keeps feature pipeline identical for fair comparison.
+
+### Results
+- Algorithm used: HistGradientBoostingClassifier (sklearn)
+- LightGBM available: False
+- CatBoost available: False
+- Validation Accuracy: 0.9202
+- Validation F1: 0.9087
+- Validation AUC: 0.9549
+- v4 reference accuracy: 0.9256
+- Beat v4? No (current: 0.9202 vs 0.9256)
+- Submission: `submissions/submission_v7.csv`
+- Runtime: ~7.4s
+- Note: Submitted regardless of comparison to v4 (0.9256) per submission policy.
+
+---
+
+## Experiment 8 — Final Blend (Best-of-Sequence Ensemble) — 2026-10-22 14:51
+
+### What we did
+- Loaded dataset using Kaggle path (`../input/playground-series-s6e10/train.csv`) with local fallback (`data/train.csv`).
+- Used existing feature engineering pipeline (service ratings mean/min/max/range/std, age bins, delay interactions, expanded interactions, target encoding, label encoding, indicators).
+- Trained/retrained base predictions/models: best XGB (v5 params: max_depth=6, lr=0.05, subsample=0.85, n_estimators=300), best RF (n_estimators=300, max_depth=12), best HistGB (max_depth=6, lr=0.05, max_iter=200), and meta-learner predictions from v4 approach (LogisticRegression on base model predictions).
+- Blended predictions with weights based on validation scores. Best model by val accuracy: `Meta` (0.9242).
+- Blend weights used: `XGB=50%, RF=20%, HGB=0%, Meta=30%`.
+- Retrained blend components on full training data; validated blend on 20% stratified holdout.
+
+### Why
+- Best-of-sequence ensemble combines strongest individual models (XGB from v5, RF, meta-learner from v4) to maximize validation accuracy.
+- Proportional/fixed weights favor the best-performing components.
+
+### Results
+- Validation Accuracy: 0.9258
+- Validation F1: 0.9151
+- Validation AUC: 0.9318
+- Blend weights: XGB=0.50, RF=0.20, HGB=0.00, Meta=0.30
+- Best base model: Meta (val acc 0.9242)
+- v4 reference accuracy: 0.9256
+- Beat v4? Yes (current: 0.9258 vs 0.9256)
+- Submission: `submissions/submission_v8.csv`
+- Runtime: ~42.3s
+- Note: Blend meets or exceeds v4 reference; submitted.

@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 import xgboost as xgb
 
 start = time.time()
-DATA_DIR = 'data'
+DATA_DIR = '../input/playground-series-s6e10'
 
 best_params = {
     'max_depth': 6,
