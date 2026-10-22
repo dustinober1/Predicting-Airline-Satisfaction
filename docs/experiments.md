@@ -69,13 +69,29 @@ Data: 699,635 train rows, 299,844 test rows, 23 raw features
 
 ---
 
-## Experiment 4 — Final Ensemble / Stacking — Planned
+## Experiment 4 — Stacking Meta-Learner — 2026-10-22 14:05
 
-### What we'll do
-- Stack predictions with meta-learner (LogisticRegression) using out-of-fold predictions from base models.
-- Submit best model before any deadline.
+### What we did
+- Implemented stacking ensemble using out-of-fold predictions from 3 base models (XGBoost, RandomForest, HistGradientBoostingClassifier) with StratifiedKFold (5 folds).
+- Used feature engineering pipeline from previous experiments: service ratings mean/min/max/range/std, age bins, delay interactions (`total_delay`, `has_delay`), expanded interactions (`age_x_distance`, `delay_x_service`, `distance_sq`, `age_x_service`, `distance_per_minute`), target encoding for `Gender`/`Customer Type`/`Type of Travel`/`Class`, and customer indicators (`loyal_business`, `eco_personal`).
+- Handled NaN in `Arrival Delay in Minutes` by filling with 0 in train/test.
+- Trained meta-learner (`LogisticRegression`) on meta-features (5-fold predictions from XGB, RF, HGB).
+- Generated predictions on `test.csv`, saved to `submissions/submission_v4.csv`.
+
+### Why
+- Stacking combines diverse model families (boosting + bagging) through a linear meta-learner, reducing variance and potentially improving generalization over simple blending.
+- Out-of-fold predictions prevent data leakage and provide unbiased meta-training data.
+- HistGradientBoostingClassifier (instead of GradientBoostingClassifier) trains faster (completed in ~100s vs 300s timeout) while handling NaN natively.
+
+### Results
+- Base model OOF AUC: XGB 0.9581, RF 0.9555, HGB 0.9572
+- Meta-learner (LogisticRegression) validation: Accuracy 0.9256, F1 0.9151, AUC 0.9581
+- Submission status: `submissions/submission_v4.csv` saved (299,844 rows, mean prediction ~0.444)
+- Runtime: ~100.1s (well within 240s timeout)
+- Note: Meta-learner AUC equals XGB base AUC; stacking gains are modest but stable.
 
 ---
+
 
 ## File Structure
 
