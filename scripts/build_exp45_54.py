@@ -203,3 +203,4 @@ for exp_id in range(45, 55):
     print(f"  v{exp_id}: rows={len(sub_df)}, mean={preds.mean():.4f}, std={preds.std():.4f} | corr(Goodpjw)={corr_vs_goodpjw:.5f}, corr(OurBest)={corr_vs_our_best:.5f}")
 
 print(f"\nAll 10 submissions generated and verified in {time.time()-start_time:.1f}s")
+
