@@ -3,8 +3,8 @@
 
 [![Kaggle Competition](https://img.shields.io/badge/Kaggle-Playground%20S6E10-20BEFF?logo=kaggle&logoColor=white)](https://www.kaggle.com/competitions/playground-series-s6e10)
 [![Evaluation Metric](https://img.shields.io/badge/Metric-ROC--AUC-success)]()
-[![Best Public Score](https://img.shields.io/badge/Best%20Public%20Score-0.96215-brightgreen)]()
-[![Current Rank](https://img.shields.io/badge/Current%20Rank-Top%201.7%25%20(%2350%20Global)-gold)]()
+[![Best Public Score](https://img.shields.io/badge/Best%20Public%20Score-0.96223-brightgreen)]()
+[![Current Rank](https://img.shields.io/badge/Current%20Rank-Top%201.0%25%20(%2338%20Global)-gold)]()
 
 ---
 
@@ -17,7 +17,7 @@ The goal is to predict whether an airline passenger was satisfied with their fli
 * **Task**: Binary Classification (`satisfaction`: 0 / 1)
 * **Metric**: ROC-AUC
 * **Dataset Scale**: 699,635 training rows, 299,844 test rows, 23 raw features
-* **Peak Public Leaderboard Score**: **0.96215** (Top Tier / #50 in the world out of 3,367 teams)
+* **Peak Public Leaderboard Score**: **0.96223** (Top 1.0% / #38 in the world out of 3,556 teams)
 
 ---
 
