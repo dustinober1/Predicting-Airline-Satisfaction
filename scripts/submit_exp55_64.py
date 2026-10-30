@@ -52,3 +52,4 @@ print("\nFetching latest submission status...")
 cmd_status = ['kaggle', 'competitions', 'submissions', '-c', COMPETITION]
 res_status = subprocess.run(cmd_status, capture_output=True, text=True)
 print(res_status.stdout)
+
